@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html lang="en" 
+		xmlns:th="http://www.thymeleaf.org"
+		xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+		  href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+		  integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+		  crossorigin="anonymous"/>
+
+	<title>Employee Directory</title>
+</head>
+
+<body>
+
+<div class="container">
+
+	<br/>
+	<h3>Employee Directory</h3>
+	<hr>
+	
+	<div class="bg-success p-2 text-white form-inline rounded ">
+
+		<div class="font-italic pr-5 pl-5">Welcome</div>
+		User : <span sec:authentication="name" class="font-weight-bold pr-5"></span>
+		Role(s) : <span sec:authentication="principal.authorities" class="font-weight-bold"></span>
+
+	</div>
+	<br>
+	<div class="form-inline">
+	
+    <form th:action="@{/employees/search}" class="form-inline">
+
+		<a th:href="@{/employees/all/ordered}"
+		   class="btn btn-primary btn-sm mr-5 mb-3">
+			Order by name
+		</a>
+
+		<a th:href="@{/employees/showAddForm}"
+			class="btn btn-primary btn-sm mr-5 mb-3">
+			Add Employee
+		</a>
+
+		<input class="form-control  ml-5 mr-sm-2 mb-3 w-40 p-3" type="search" name="employeeName" placeholder="Search by name" />
+		<button class="btn btn-success mb-3" type="submit">Search</button>
+
+    </form>
+
+		<form th:action="@{/employees/employeeId}" class="form-inline">
+			<input class="form-control ml-5 mr-sm-2 mb-3 w-25 p-3" type="text" name="employeeId" placeholder="ID" />
+			<button class="btn btn-success mb-3" type="submit">Search ID</button>
+		</form>
+
+	</div>
+
+
+	<table class="table table-bordered table-striped text-center">
+		<thead class="thead-dark ">
+			<tr>
+				<th>First Name</th>
+				<th>Surname</th>
+				<th>Email</th>
+
+				<div sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')">
+					<th>Action</th>
+				</div>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr th:each="tempEmployee : ${employees}">
+			
+				<td th:text="${tempEmployee.firstName}" />	
+				<td th:text="${tempEmployee.surName}" />
+				<td th:text="${tempEmployee.email}" />	
+
+				<div class="text-center" sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')">
+				
+<!--					<td>-->
+<!--						<div sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')" >-->
+
+<!--							&lt;!&ndash; Add "update" button/link &ndash;&gt;-->
+<!--							<a th:href="@{/api/employees/showUpdateForm(employeeId=${tempEmployee.id})}"-->
+<!--							   class="btn btn-info btn-sm ">-->
+<!--								Update-->
+<!--							</a>-->
+
+<!--						</div>-->
+
+<!--						<div sec:authorize="hasRole('ROLE_ADMIN')">-->
+
+<!--							&lt;!&ndash; Add "delete" button/link &ndash;&gt;-->
+<!--							<a th:href="@{/api/employees/delete(employeeId=${tempEmployee.id})}"-->
+<!--							   class="btn btn-danger btn-sm "-->
+<!--							   onclick="if (!(confirm('Are you sure you want to delete this employee?'))) return false">-->
+<!--								Delete-->
+<!--							</a>-->
+
+<!--						</div>-->
+
+<!--					</td>-->
+
+					<td>
+							<!-- Add "update" button/link -->
+							<a sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')" th:href="@{/employees/showUpdateForm(employeeId=${tempEmployee.id})}"
+							   class="btn btn-info btn-sm ">
+								Update
+							</a>
+
+							<!-- Add "delete" button/link -->
+							<a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/employees/delete(employeeId=${tempEmployee.id})}"
+							   class="btn btn-danger btn-sm "
+							   onclick="if (!(confirm('Are you sure you want to delete this employee?'))) return false">
+								Delete
+							</a>
+					</td>
+
+
+				</div>				
+				
+			</tr>
+		</tbody>		
+	</table>
+	
+	<!-- Add a logout button -->
+	<form style="margin-bottom: 15px;" th:action="@{/logout}" method="POST">
+	
+		<input type="submit" value="Logout" class="btn btn-outline-primary mt-2" />
+	
+	</form>
+	
+</div>
+	
+</body>
+</html>
+
+
+
